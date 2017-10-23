@@ -5,8 +5,8 @@ import json
 import math
 from importlib import import_module
 
-from django.core.exceptions import ImproperlyConfigured
-from django.utils.encoding import force_text
+# from django.core.exceptions import ImproperlyConfigured
+# from django.utils.encoding import force_text
 from sorl.thumbnail.compat import encode
 
 

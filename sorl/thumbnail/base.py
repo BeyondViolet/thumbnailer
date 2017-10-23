@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
+import importlib
 import logging
 import os
 import re
 
-from django.utils.six import string_types
 
 from sorl.thumbnail.conf import settings, defaults as default_settings
 from sorl.thumbnail.helpers import tokey, serialize
@@ -29,23 +29,36 @@ class ThumbnailBackend(object):
     want to change the way destination filename is generated.
     """
 
-    default_options = {
-        'format': settings.THUMBNAIL_FORMAT,
-        'quality': settings.THUMBNAIL_QUALITY,
-        'colorspace': settings.THUMBNAIL_COLORSPACE,
-        'upscale': settings.THUMBNAIL_UPSCALE,
-        'crop': False,
-        'cropbox': None,
-        'rounded': None,
-        'padding': settings.THUMBNAIL_PADDING,
-        'padding_color': settings.THUMBNAIL_PADDING_COLOR,
-    }
-
     extra_options = (
         ('progressive', 'THUMBNAIL_PROGRESSIVE'),
         ('orientation', 'THUMBNAIL_ORIENTATION'),
         ('blur', 'THUMBNAIL_BLUR'),
     )
+
+    def __init__(self, settings_module):
+        self.settings = type('Settings', tuple(), {})
+
+        try:
+            settings_mod = importlib.import_module(settings_module)
+        except:
+            settings_mod = None
+
+        for obj in (default_settings, settings_mod):
+            for attr in dir(obj):
+                if attr == attr.upper():
+                    setattr(self.settings, attr, getattr(obj, attr))
+
+        self.default_options = {
+            'format': self.settings.THUMBNAIL_FORMAT,
+            'quality': self.settings.THUMBNAIL_QUALITY,
+            'colorspace': self.settings.THUMBNAIL_COLORSPACE,
+            'upscale': self.settings.THUMBNAIL_UPSCALE,
+            'crop': False,
+            'cropbox': None,
+            'rounded': None,
+            'padding': self.settings.THUMBNAIL_PADDING,
+            'padding_color': self.settings.THUMBNAIL_PADDING_COLOR,
+        }
 
     def file_extension(self, source):
         return os.path.splitext(source.name)[1].lower()
@@ -62,9 +75,8 @@ class ThumbnailBackend(object):
         elif file_extension == '.webp':
             return 'WEBP'
         else:
-            from django.conf import settings
 
-            return getattr(settings, 'THUMBNAIL_FORMAT', default_settings.THUMBNAIL_FORMAT)
+            return self.settings.THUMBNAIL_FORMAT
 
     def get_thumbnail(self, file_, geometry_string, **options):
         """
@@ -183,7 +195,7 @@ class ThumbnailBackend(object):
         for resolution in settings.THUMBNAIL_ALTERNATIVE_RESOLUTIONS:
             resolution_geometry = (int(geometry[0] * resolution), int(geometry[1] * resolution))
             resolution_options = options.copy()
-            if 'crop' in options and isinstance(options['crop'], string_types):
+            if 'crop' in options and isinstance(options['crop'], str):
                 crop = options['crop'].split(" ")
                 for i in range(len(crop)):
                     s = re.match("(\d+)px", crop[i])

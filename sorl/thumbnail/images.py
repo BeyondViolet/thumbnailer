@@ -5,10 +5,10 @@ import json
 import os
 import re
 
-from django.core.files.base import File, ContentFile
-from django.core.files.storage import Storage  # , default_storage
-from django.utils.encoding import force_text
-from django.utils.functional import LazyObject, empty
+# from django.core.files.base import File, ContentFile
+# from django.core.files.storage import Storage  # , default_storage
+# from django.utils.encoding import force_text
+# from django.utils.functional import LazyObject, empty
 from sorl.thumbnail import default
 from sorl.thumbnail.conf import settings
 from sorl.thumbnail.compat import (urlopen, urlparse, urlsplit,

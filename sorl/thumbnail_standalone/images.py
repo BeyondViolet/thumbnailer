@@ -9,14 +9,14 @@ import re
 # from django.core.files.storage import Storage  # , default_storage
 # from django.utils.encoding import force_text
 # from django.utils.functional import LazyObject, empty
-from sorl.thumbnail import default
-from sorl.thumbnail.conf import settings
-from sorl.thumbnail.compat import (urlopen, urlparse, urlsplit,
+from sorl.thumbnail_standalone import default
+from sorl.thumbnail_standalone.conf import settings
+from sorl.thumbnail_standalone.compat import (urlopen, urlparse, urlsplit,
                                    quote, quote_plus, URLError, encode)
-from sorl.thumbnail.default import storage as default_storage
-from sorl.thumbnail.helpers import ThumbnailError, tokey, get_module_class, deserialize
-from sorl.thumbnail.parsers import parse_geometry
-
+from sorl.thumbnail_standalone.default import storage as default_storage
+from sorl.thumbnail_standalone.helpers import ThumbnailError, tokey, get_module_class, deserialize
+from sorl.thumbnail_standalone.parsers import parse_geometry
+from sorl.thumbnail_standalone.abc.storage import Storage
 url_pat = re.compile(r'^(https?|ftp):\/\/')
 
 

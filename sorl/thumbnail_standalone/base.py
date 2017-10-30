@@ -6,11 +6,11 @@ import os
 import re
 
 
-from sorl.thumbnail.conf import settings, defaults as default_settings
-from sorl.thumbnail.helpers import tokey, serialize
-from sorl.thumbnail.images import ImageFile, DummyImageFile
-from sorl.thumbnail import default
-from sorl.thumbnail.parsers import parse_geometry
+from sorl.thumbnail_standalone.conf import settings, defaults as default_settings
+from sorl.thumbnail_standalone.helpers import tokey, serialize
+from sorl.thumbnail_standalone.images import ImageFile, DummyImageFile
+from sorl.thumbnail_standalone import default
+from sorl.thumbnail_standalone.parsers import parse_geometry
 
 
 logger = logging.getLogger(__name__)
@@ -89,14 +89,14 @@ class ThumbnailBackend(object):
         if file_:
             source = ImageFile(file_)
         else:
-            if settings.THUMBNAIL_DUMMY:
+            if self.settings.THUMBNAIL_DUMMY:
                 return DummyImageFile(geometry_string)
             else:
                 logger.error('missing file_ argument in get_thumbnail()')
                 return
 
         # preserve image filetype
-        if settings.THUMBNAIL_PRESERVE_FORMAT:
+        if self.settings.THUMBNAIL_PRESERVE_FORMAT:
             options.setdefault('format', self._get_format(source))
 
         for key, value in self.default_options.items():
@@ -119,12 +119,12 @@ class ThumbnailBackend(object):
 
         # We have to check exists() because the Storage backend does not
         # overwrite in some implementations.
-        if settings.THUMBNAIL_FORCE_OVERWRITE or not thumbnail.exists():
+        if self.settings.THUMBNAIL_FORCE_OVERWRITE or not thumbnail.exists():
             try:
                 source_image = default.engine.get_image(source)
             except IOError as e:
                 logger.exception(e)
-                if settings.THUMBNAIL_DUMMY:
+                if self.settings.THUMBNAIL_DUMMY:
                     return DummyImageFile(geometry_string)
                 else:
                     # if S3Storage says file doesn't exist remotely, don't try to
@@ -192,7 +192,7 @@ class ThumbnailBackend(object):
         geometry = parse_geometry(geometry_string, ratio)
         file_name, dot_file_ext = os.path.splitext(name)
 
-        for resolution in settings.THUMBNAIL_ALTERNATIVE_RESOLUTIONS:
+        for resolution in self.settings.THUMBNAIL_ALTERNATIVE_RESOLUTIONS:
             resolution_geometry = (int(geometry[0] * resolution), int(geometry[1] * resolution))
             resolution_options = options.copy()
             if 'crop' in options and isinstance(options['crop'], str):
@@ -221,4 +221,4 @@ class ThumbnailBackend(object):
         key = tokey(source.key, geometry_string, serialize(options))
         # make some subdirs
         path = '%s/%s/%s' % (key[:2], key[2:4], key)
-        return '%s%s.%s' % (settings.THUMBNAIL_PREFIX, path, EXTENSIONS[options['format']])
+        return '%s%s.%s' % (self.settings.THUMBNAIL_PREFIX, path, EXTENSIONS[options['format']])

@@ -7,7 +7,7 @@ from importlib import import_module
 
 # from django.core.exceptions import ImproperlyConfigured
 # from django.utils.encoding import force_text
-from sorl.thumbnail.compat import encode
+from sorl.thumbnail_standalone.compat import encode
 
 
 class ThumbnailError(Exception):

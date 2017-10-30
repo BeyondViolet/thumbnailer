@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
 import redis
-from sorl.thumbnail.kvstores.base import KVStoreBase
-from sorl.thumbnail.conf import settings
+from sorl.thumbnail_standalone.kvstores.base import KVStoreBase
+from sorl.thumbnail_standalone.conf import settings
 
 
 class KVStore(KVStoreBase):

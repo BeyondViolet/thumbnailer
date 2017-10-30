@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, division
 
 import math
-from sorl.thumbnail.engines.base import EngineBase
-from sorl.thumbnail.compat import BufferIO
+from sorl.thumbnail_standalone.engines.base import EngineBase
+from sorl.thumbnail_standalone.compat import BufferIO
 
 try:
     from PIL import Image, ImageFile, ImageDraw, ImageFilter

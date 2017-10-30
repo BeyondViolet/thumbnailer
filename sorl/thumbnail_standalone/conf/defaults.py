@@ -2,22 +2,22 @@
 THUMBNAIL_DEBUG = False
 
 # Backend
-THUMBNAIL_BACKEND = 'sorl.thumbnail.base.ThumbnailBackend'
+THUMBNAIL_BACKEND = 'sorl.thumbnail_standalone.base.ThumbnailBackend'
 
 # Key-value store, ships with:
-# sorl.thumbnail.kvstores.redis_kvstore.KVStore
+# sorl.thumbnail_standalone.kvstores.redis_kvstore.KVStore
 # Redis requires some more work, see docs
-THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+THUMBNAIL_KVSTORE = 'sorl.thumbnail_standalone.kvstores.redis_kvstore.KVStore'
 
 # Change this to something else for MSSQL
 THUMBNAIL_KEY_DBCOLUMN = 'key'
 
 # Engine, ships with:
-# sorl.thumbnail.engines.convert_engine.Engine
-# sorl.thumbnail.engines.pil_engine.Engine
-# sorl.thumbnail.engines.pgmagick_engine.Engine
+# sorl.thumbnail_standalone.engines.convert_engine.Engine
+# sorl.thumbnail_standalone.engines.pil_engine.Engine
+# sorl.thumbnail_standalone.engines.pgmagick_engine.Engine
 # convert is preferred but requires imagemagick or graphicsmagick, se docs
-THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.pil_engine.Engine'
+THUMBNAIL_ENGINE = 'sorl.thumbnail_standalone.engines.pil_engine.Engine'
 
 # Path to Imagemagick or Graphicsmagick ``convert`` and ``identify``.
 THUMBNAIL_CONVERT = 'convert'
@@ -76,7 +76,7 @@ THUMBNAIL_PROGRESSIVE = True
 # Orientate the thumbnail with respect to source EXIF orientation tag
 THUMBNAIL_ORIENTATION = True
 
-# This means sorl.thumbnail will generate and serve a generated dummy image
+# This means sorl.thumbnail_standalone will generate and serve a generated dummy image
 # regardless of the thumbnail source content
 THUMBNAIL_DUMMY = False
 

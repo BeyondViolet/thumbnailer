@@ -1,8 +1,8 @@
 # from django.utils.functional import LazyObject
 
-from sorl.thumbnail.conf import settings
-from sorl.thumbnail.helpers import get_module_class
-
+from sorl.thumbnail_standalone.conf import settings
+from sorl.thumbnail_standalone.helpers import get_module_class
+from sorl.thumbnail_standalone.lazy import LazyObject
 
 class KVStore(LazyObject):
     def _setup(self):

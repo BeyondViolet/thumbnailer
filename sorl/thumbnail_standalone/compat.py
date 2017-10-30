@@ -36,7 +36,7 @@ def urlsplit(url):
 # -- Urlopen with a proper default user agent
 
 def urlopen(url):
-    from sorl.thumbnail.conf import settings
+    from sorl.thumbnail_standalone.conf import settings
 
     req = Request(
         url,

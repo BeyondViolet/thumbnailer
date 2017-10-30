@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
-from sorl.thumbnail.conf import settings
-from sorl.thumbnail.helpers import serialize, deserialize, ThumbnailError
-from sorl.thumbnail.images import serialize_image_file, deserialize_image_file
+from sorl.thumbnail_standalone.conf import settings
+from sorl.thumbnail_standalone.helpers import serialize, deserialize, ThumbnailError
+from sorl.thumbnail_standalone.images import serialize_image_file, deserialize_image_file
 
 
 def add_prefix(key, identity='image'):

@@ -1,6 +1,6 @@
-from django.conf import settings as user_settings
-from django.utils.functional import LazyObject
-from sorl.thumbnail.conf import defaults
+#from django.conf import settings as user_settings
+from sorl.thumbnail_standalone.lazy import LazyObject
+from sorl.thumbnail_standalone.conf import defaults
 
 
 class Settings(object):

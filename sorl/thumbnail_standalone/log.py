@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import logging
 
-from django.core.mail.message import EmailMessage
+# from django.core.mail.message import EmailMessage
 
-from sorl.thumbnail.conf import settings
+from sorl.thumbnail_standalone.conf import settings
 
 
 class ThumbnailLogHandler(logging.Handler):
@@ -29,11 +29,12 @@ class ThumbnailLogHandler(logging.Handler):
         else:
             stack_trace = 'No stack trace available'
         message = "%s\n\n%s" % (stack_trace, request_repr)
-        msg = EmailMessage(
-            '[sorl-thumbnail] %s: %s' % (record.levelname, request_path),
-            message,
-            settings.SERVER_EMAIL,
-            [a[1] for a in settings.ADMINS],
-            connection=None
-        )
-        msg.send(fail_silently=True)
+        # msg = EmailMessage(
+        #     '[sorl-thumbnail] %s: %s' % (record.levelname, request_path),
+        #     message,
+        #     settings.SERVER_EMAIL,
+        #     [a[1] for a in settings.ADMINS],
+        #     connection=None
+        # )
+        # msg.send(fail_silently=True)
+        print(message)

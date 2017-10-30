@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import division
 
 from sorl.thumbnail_standalone.conf import settings
 from sorl.thumbnail_standalone.helpers import toint

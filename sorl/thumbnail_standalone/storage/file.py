@@ -1,4 +1,15 @@
 from sorl.thumbnail_standalone.abc.storage import Storage
+import os
+from sorl.thumbnail_standalone.conf import settings
+
+class cached_property(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, cls=None):
+        result = instance.__dict__[self.func.__name__] = self.func(instance)
+        return result
+
 # @deconstructible
 class FileSystemStorage(Storage):
     """
@@ -11,7 +22,7 @@ class FileSystemStorage(Storage):
         self._base_url = base_url
         self._file_permissions_mode = file_permissions_mode
         self._directory_permissions_mode = directory_permissions_mode
-        setting_changed.connect(self._clear_cached_properties)
+        # setting_changed.connect(self._clear_cached_properties)
 
     def _clear_cached_properties(self, setting, **kwargs):
         """Reset setting based property values."""
@@ -34,7 +45,7 @@ class FileSystemStorage(Storage):
 
     @cached_property
     def location(self):
-        return abspathu(self.base_location)
+        return os.path.abspath(self.base_location)
 
     @cached_property
     def base_url(self):
@@ -158,7 +169,7 @@ class FileSystemStorage(Storage):
         return directories, files
 
     def path(self, name):
-        return safe_join(self.location, name)
+        return os.path.join(self.location, name)
 
     def size(self, name):
         return os.path.getsize(self.path(name))

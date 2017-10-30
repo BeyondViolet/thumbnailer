@@ -1,6 +1,5 @@
 # encoding=utf-8
 
-from __future__ import unicode_literals, division
 import json
 import os
 import re
@@ -17,6 +16,7 @@ from sorl.thumbnail_standalone.default import storage as default_storage
 from sorl.thumbnail_standalone.helpers import ThumbnailError, tokey, get_module_class, deserialize
 from sorl.thumbnail_standalone.parsers import parse_geometry
 from sorl.thumbnail_standalone.abc.storage import Storage
+from sorl.thumbnail_standalone.lazy import LazyObject, empty
 url_pat = re.compile(r'^(https?|ftp):\/\/')
 
 
@@ -87,7 +87,7 @@ class ImageFile(BaseImageFile):
         if hasattr(file_, 'name'):
             self.name = file_.name
         else:
-            self.name = force_text(file_)
+            self.name = str(file_)
 
         # TODO: Add a customizable naming method as a signal
 

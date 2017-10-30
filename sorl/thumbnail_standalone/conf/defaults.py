@@ -24,7 +24,7 @@ THUMBNAIL_CONVERT = 'convert'
 THUMBNAIL_IDENTIFY = 'identify'
 
 # Storage for the generated thumbnails
-# THUMBNAIL_STORAGE = settings.DEFAULT_FILE_STORAGE
+THUMBNAIL_STORAGE = 'sorl.thumbnail_standalone.storage.file.FileSystemStorage'
 
 # Redis settings
 THUMBNAIL_REDIS_DB = 0

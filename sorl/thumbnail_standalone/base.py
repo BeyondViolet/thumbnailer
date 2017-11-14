@@ -33,18 +33,15 @@ class ThumbnailBackend(object):
         ('blur', 'THUMBNAIL_BLUR'),
     )
 
-    def __init__(self, settings_module):
+    def __init__(self, settings):
         self.settings = type('Settings', tuple(), {})
 
-        try:
-            settings_mod = importlib.import_module(settings_module)
-        except:
-            settings_mod = None
+        for attr in dir(default_settings):
+            if attr == attr.upper():
+                setattr(self.settings, attr, getattr(default_settings, attr))
+        for attr in settings:
+            setattr(self.settings, attr, settings[attr])
 
-        for obj in (default_settings, settings_mod):
-            for attr in dir(obj):
-                if attr == attr.upper():
-                    setattr(self.settings, attr, getattr(obj, attr))
 
         self.default_options = {
             'format': self.settings.THUMBNAIL_FORMAT,

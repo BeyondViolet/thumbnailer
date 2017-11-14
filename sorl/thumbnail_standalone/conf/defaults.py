@@ -110,3 +110,6 @@ THUMBNAIL_FLATTEN = False
 # Whenever we will check an existing thumbnail exists and avoid to overwrite or not.
 # Set this to true if you have an slow .exists() implementation on your storage backend of choice.
 THUMBNAIL_FORCE_OVERWRITE = False
+
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = None
+FILE_UPLOAD_PERMISSIONS = None

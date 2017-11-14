@@ -70,10 +70,10 @@ class BaseImageFile(object):
         return float(self.x) / float(self.y)
 
     @property
-    def url(self):
+    def path(self):
         raise NotImplementedError()
 
-    src = url
+    src = path
 
 
 class ImageFile(BaseImageFile):
@@ -104,8 +104,6 @@ class ImageFile(BaseImageFile):
             self.storage = storage
         elif hasattr(file_, 'storage'):
             self.storage = file_.storage
-        elif url_pat.match(self.name):
-            self.storage = UrlStorage()
         else:
             self.storage = default_storage
 
@@ -116,7 +114,7 @@ class ImageFile(BaseImageFile):
             if self.name.startswith(location):
                 self.name = self.name[len(location):]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def exists(self):
@@ -155,8 +153,8 @@ class ImageFile(BaseImageFile):
         return self._size
 
     @property
-    def url(self):
-        return self.storage.url(self.name)
+    def path(self):
+        return self.name
 
     def read(self):
         f = self.storage.open(self.name)
@@ -166,9 +164,6 @@ class ImageFile(BaseImageFile):
             f.close()
 
     def write(self, content):
-        if not isinstance(content, File):
-            content = ContentFile(content)
-
         self._size = None
         self.name = self.storage.save(self.name, content)
 
@@ -207,38 +202,10 @@ class DummyImageFile(BaseImageFile):
         return True
 
     @property
-    def url(self):
+    def path(self):
         return settings.THUMBNAIL_DUMMY_SOURCE % (
             {'width': self.x, 'height': self.y}
         )
-
-
-class UrlStorage(Storage):
-    def normalize_url(self, url, charset='utf-8'):
-        url = encode(url, charset, 'ignore')
-        scheme, netloc, path, qs, anchor = urlsplit(url)
-
-        path = quote(path, b'/%')
-        qs = quote_plus(qs, b':&%=')
-
-        return urlparse.urlunsplit((scheme, netloc, path, qs, anchor))
-
-    def open(self, name, mode='rb'):
-        return urlopen(self.normalize_url(name))
-
-    def exists(self, name):
-        try:
-            self.open(name)
-        except URLError:
-            return False
-        return True
-
-    def url(self, name):
-        return name
-
-    def delete(self, name):
-        pass
-
 
 def delete_all_thumbnails():
     storage = default.storage

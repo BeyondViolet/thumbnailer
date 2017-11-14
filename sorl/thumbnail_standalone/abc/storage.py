@@ -1,4 +1,4 @@
-import os
+import os, io
 import secrets
 
 class Storage(object):
@@ -27,7 +27,7 @@ class Storage(object):
             name = content.name
 
         if not hasattr(content, 'chunks'):
-            content = File(content, name)
+            content = io.BytesIO(content)
 
         name = self.get_available_name(name, max_length=max_length)
         return self._save(name, content)

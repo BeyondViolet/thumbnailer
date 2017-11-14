@@ -1,6 +1,10 @@
+from datetime import datetime, timezone
+import errno
+
 from sorl.thumbnail_standalone.abc.storage import Storage
-import os
+import os, io
 from sorl.thumbnail_standalone.conf import settings
+import filelock
 
 class cached_property(object):
     def __init__(self, func):
@@ -29,8 +33,6 @@ class FileSystemStorage(Storage):
         if setting == 'MEDIA_ROOT':
             self.__dict__.pop('base_location', None)
             self.__dict__.pop('location', None)
-        elif setting == 'MEDIA_URL':
-            self.__dict__.pop('base_url', None)
         elif setting == 'FILE_UPLOAD_PERMISSIONS':
             self.__dict__.pop('file_permissions_mode', None)
         elif setting == 'FILE_UPLOAD_DIRECTORY_PERMISSIONS':
@@ -47,11 +49,11 @@ class FileSystemStorage(Storage):
     def location(self):
         return os.path.abspath(self.base_location)
 
-    @cached_property
-    def base_url(self):
-        if self._base_url is not None and not self._base_url.endswith('/'):
-            self._base_url += '/'
-        return self._value_or_setting(self._base_url, settings.MEDIA_URL)
+    # @cached_property
+    # def base_url(self):
+    #     if self._base_url is not None and not self._base_url.endswith('/'):
+    #         self._base_url += '/'
+    #     return self._value_or_setting(self._base_url, settings.MEDIA_URL)
 
     @cached_property
     def file_permissions_mode(self):
@@ -62,7 +64,7 @@ class FileSystemStorage(Storage):
         return self._value_or_setting(self._directory_permissions_mode, settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
 
     def _open(self, name, mode='rb'):
-        return File(open(self.path(name), mode))
+        return io.FileIO(self.path(name), mode)
 
     def _save(self, name, content):
         full_path = self.path(name)
@@ -100,7 +102,8 @@ class FileSystemStorage(Storage):
             try:
                 # This file has a file path that we can move.
                 if hasattr(content, 'temporary_file_path'):
-                    file_move_safe(content.temporary_file_path(), full_path)
+                    # file_move_safe(content.temporary_file_path(), full_path)
+                    pass # TODO: move temporary file
 
                 # This is a normal uploadedfile that we can stream.
                 else:
@@ -112,14 +115,19 @@ class FileSystemStorage(Storage):
                     fd = os.open(full_path, flags, 0o666)
                     _file = None
                     try:
-                        locks.lock(fd, locks.LOCK_EX)
-                        for chunk in content.chunks():
-                            if _file is None:
-                                mode = 'wb' if isinstance(chunk, bytes) else 'wt'
-                                _file = os.fdopen(fd, mode)
-                            _file.write(chunk)
+                        lock = filelock.FileLock(full_path)
+                        with lock.acquire():
+                            file = io.FileIO(fd, 'wb', closefd=False)
+                            r = content.read(4096)
+                            while r:
+                                file.write(r)
+                                r = content.read(4096)
+                            # for chunk in content.chunks():
+                            #     if _file is None:
+                            #         mode = 'wb' if isinstance(chunk, bytes) else 'wt'
+                            #         _file = os.fdopen(fd, mode)
+                            #     _file.write(chunk)
                     finally:
-                        locks.unlock(fd)
                         if _file is not None:
                             _file.close()
                         else:
@@ -139,7 +147,7 @@ class FileSystemStorage(Storage):
             os.chmod(full_path, self.file_permissions_mode)
 
         # Store filenames with forward slashes, even on Windows.
-        return force_text(name.replace('\\', '/'))
+        return str(name.replace('\\', '/'))
 
     def delete(self, name):
         assert name, "The name argument is not allowed to be empty."
@@ -173,14 +181,6 @@ class FileSystemStorage(Storage):
 
     def size(self, name):
         return os.path.getsize(self.path(name))
-
-    def url(self, name):
-        if self.base_url is None:
-            raise ValueError("This file is not accessible via a URL.")
-        url = filepath_to_uri(name)
-        if url is not None:
-            url = url.lstrip('/')
-        return urljoin(self.base_url, url)
 
     def _datetime_from_timestamp(self, ts):
         """

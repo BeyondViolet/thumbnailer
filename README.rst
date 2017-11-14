@@ -1,5 +1,3 @@
-|travis| |pypi| |coveralls|
-
 Standalone thumbnailer engine based on sorl-thumbnail.
 
 Features at a glance
@@ -7,7 +5,7 @@ Features at a glance
 
 - Python 3 support
 - Storage support
-- Pluggable Engine support for `Pillow`_
+- Pluggable Engine support for Pillow
 - Pluggable Key Value Store support (redis)
 - Pluggable Backend support
 - Dummy generation (placeholders)

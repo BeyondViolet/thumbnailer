@@ -13,16 +13,16 @@ class TestCommand(test):
 
 
 setup(
-    name='sorl-thumbnail',
+    name='bv-thumbnailer',
     version=__version__,
-    description='Thumbnails for Django',
+    description='Standalone thumbnailer based on sorl-thumbnail',
     long_description=open('README.rst').read(),
     author=__author__,
     author_email='mikko@aino.se',
     maintainer=__maintainer__,
     maintainer_email=__email__,
     license=__license__,
-    url='https://github.com/jazzband/sorl-thumbnail',
+    url='https://github.com/BeyondViolet/thumbnailer',
     packages=find_packages(exclude=['tests', 'tests.*']),
     platforms='any',
     zip_safe=False,

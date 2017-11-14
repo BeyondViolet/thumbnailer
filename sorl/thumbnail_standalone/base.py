@@ -34,11 +34,11 @@ class ThumbnailBackend(object):
     )
 
     def __init__(self, settings):
-        self.settings = type('Settings', tuple(), {})
+        self.settings = default_settings
 
-        for attr in dir(default_settings):
-            if attr == attr.upper():
-                setattr(self.settings, attr, getattr(default_settings, attr))
+        # for attr in dir(default_settings):
+        #     if attr == attr.upper():
+        #         setattr(self.settings, attr, getattr(default_settings, attr))
         for attr in settings:
             setattr(self.settings, attr, settings[attr])
 

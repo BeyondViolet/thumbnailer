@@ -70,10 +70,10 @@ class BaseImageFile(object):
         return float(self.x) / float(self.y)
 
     @property
-    def path(self):
+    def url(self):
         raise NotImplementedError()
 
-    src = path
+    src = url
 
 
 class ImageFile(BaseImageFile):
@@ -115,7 +115,7 @@ class ImageFile(BaseImageFile):
                 self.name = self.name[len(location):]
 
     def __str__(self):
-        return self.name
+        return self.url
 
     def exists(self):
         return self.storage.exists(self.name)
@@ -153,8 +153,8 @@ class ImageFile(BaseImageFile):
         return self._size
 
     @property
-    def path(self):
-        return self.name
+    def url(self):
+        return self.storage.url(self.name)
 
     def read(self):
         f = self.storage.open(self.name)
@@ -202,7 +202,7 @@ class DummyImageFile(BaseImageFile):
         return True
 
     @property
-    def path(self):
+    def url(self):
         return settings.THUMBNAIL_DUMMY_SOURCE % (
             {'width': self.x, 'height': self.y}
         )

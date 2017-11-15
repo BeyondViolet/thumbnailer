@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import errno
+from urllib.parse import urljoin, quote
 
 from sorl.thumbnail_standalone.abc.storage import Storage
 import os, io
@@ -33,6 +34,8 @@ class FileSystemStorage(Storage):
         if setting == 'MEDIA_ROOT':
             self.__dict__.pop('base_location', None)
             self.__dict__.pop('location', None)
+        elif setting == 'MEDIA_URL':
+            self.__dict__.pop('base_url', None)
         elif setting == 'FILE_UPLOAD_PERMISSIONS':
             self.__dict__.pop('file_permissions_mode', None)
         elif setting == 'FILE_UPLOAD_DIRECTORY_PERMISSIONS':
@@ -49,11 +52,11 @@ class FileSystemStorage(Storage):
     def location(self):
         return os.path.abspath(self.base_location)
 
-    # @cached_property
-    # def base_url(self):
-    #     if self._base_url is not None and not self._base_url.endswith('/'):
-    #         self._base_url += '/'
-    #     return self._value_or_setting(self._base_url, settings.MEDIA_URL)
+    @cached_property
+    def base_url(self):
+        if self._base_url is not None and not self._base_url.endswith('/'):
+            self._base_url += '/'
+        return self._value_or_setting(self._base_url, settings.MEDIA_URL)
 
     @cached_property
     def file_permissions_mode(self):
@@ -181,6 +184,14 @@ class FileSystemStorage(Storage):
 
     def size(self, name):
         return os.path.getsize(self.path(name))
+
+    def url(self, name):
+        if self.base_url is None:
+            raise ValueError("This file is not accessible via a URL.")
+        url = quote(bytes(name.replace("\\", "/").encode()), safe=b"/~!*()'")
+        if url is not None:
+            url = url.lstrip('/')
+        return urljoin(self.base_url, url)
 
     def _datetime_from_timestamp(self, ts):
         """
